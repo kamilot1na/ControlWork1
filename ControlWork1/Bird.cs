@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Data.Common;
+using System.Threading.Tasks.Dataflow;
 
 namespace ControlWork1
 {
-    public class Bird
-    {
+    abstract class Bird {
         public Bird()
         {
             
@@ -13,7 +13,7 @@ namespace ControlWork1
         public int Speed { get; set; }
         
         public bool isNailed { get; set; }
-        private int getBaseSpeed()
+        public int getBaseSpeed()
         {
             return Speed;
         }
@@ -24,17 +24,43 @@ namespace ControlWork1
             Speed = _Speed;
             isNailed = _isNailed;
         }
-        
-        public double getSpeed(int Id) {
-            switch (Id) {
-                case 1:
-                    return getBaseSpeed();
-                case 2:
-                    return getBaseSpeed() - 5;
-                case 3:
-                    return (isNailed) ? 0 : getBaseSpeed();
-            }
-            throw new NotImplementedException("Should be unreachable");
+
+        public abstract double getSpeed();
+
+    }
+
+    public interface IBird
+    {
+        double getSpeed();
+    }
+
+    abstract class Adapter : IBird
+    {
+        private readonly Bird _bird;
+
+        public Adapter(Bird bird)
+        {
+            _bird = bird;
+        }
+
+        public double getSpeed()
+        {
+            return _bird.getSpeed();
+        }
+    }
+    class European : Bird {
+        public override double getSpeed() {
+            return getBaseSpeed();
+        }
+    }
+    class African : Bird {
+        public override double getSpeed() {
+            return getBaseSpeed() - 5;
+        }
+    }
+    class NorwegianBlue : Bird {
+        public override double getSpeed() {
+            return (isNailed) ? 0 : getBaseSpeed();
         }
     }
 }
